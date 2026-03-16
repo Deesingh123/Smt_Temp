@@ -6,6 +6,7 @@ from streamlit_autorefresh import st_autorefresh
 
 st.set_page_config(layout="wide", page_title="SMT 60 Monitoring")
 
+# Auto-refresh every 5 seconds
 st_autorefresh(interval=5000, key="data_refresh")
 
 # ────────────────────────────────────────────────
@@ -70,7 +71,7 @@ c1, c2, c3 = st.columns([1.0, 4, 0.7])
 
 with c1:
     try:
-        st.image("image.png", width=160 )
+        st.image("image.png", width=160)
     except:
         st.write("logo")
 
@@ -78,18 +79,17 @@ with c2:
     st.markdown("<div class='title'>SMT 60 | TEMPERATURE & HUMIDITY MONITORING</div>", unsafe_allow_html=True)
 
 with c3:
-    with c3:
-        time_placeholder = st.empty()
-        now = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-        time_placeholder.markdown(
-             f"""
-             <div class='time'>
-             🔴 LIVE 
-             {now}
-              </div>
-              """,
-              unsafe_allow_html=True
-          )
+    # Display current time (updates every 5 seconds)
+    now = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+    st.markdown(
+        f"""
+        <div class='time'>
+        🔴 LIVE <br>
+        {now}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 st.markdown("---")
 
@@ -119,7 +119,6 @@ for i in range(0, len(pairs), 2):
         line, (base_t, base_h) = left
         t = vary(base_t, 0.5)
         h = vary(base_h, 2.0)
-
         st.markdown(f"""
         <div class="card">
             <div class="line-title">{line}</div>
@@ -135,7 +134,6 @@ for i in range(0, len(pairs), 2):
             line, (base_t, base_h) = right
             t = vary(base_t, 0.4)
             h = vary(base_h, 2.0)
-
             st.markdown(f"""
             <div class="card">
                 <div class="line-title">{line}</div>
@@ -145,6 +143,4 @@ for i in range(0, len(pairs), 2):
                 </div>
             </div>
             """, unsafe_allow_html=True)
-    else:
-        # Line 7 → only in left column, right stays empty
-        pass
+    # Line 7 is placed alone in the left column, so nothing more needed
