@@ -80,7 +80,7 @@ with c2:
 with c3:
     with c3:
         time_placeholder = st.empty()
-        now = datetime.now().astimezone().strftime("%d-%m-%Y %H:%M:%S")
+        now = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
         time_placeholder.markdown(
              f"""
              <div class='time'>
