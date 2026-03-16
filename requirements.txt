@@ -2,4 +2,6 @@ streamlit
 streamlit-autorefresh
 pandas
 numpy
+random
+datetime
 pytz
