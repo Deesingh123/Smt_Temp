@@ -1,6 +1,7 @@
 import streamlit as st
 import random
 from datetime import datetime
+import pytz
 from streamlit_autorefresh import st_autorefresh
 
 st.set_page_config(layout="wide", page_title="SMT 60 Monitoring")
@@ -53,13 +54,12 @@ st.markdown("""
     }
     .temp { color: #2ECC71; }
     .hum  { color: #3498DB; }
-    .time {
-        color: #7D7D7D;
-        DARK MODE: #94a3b8;
-        text-align: right;
-        font-size: 1.2rem;
-        white-space: nowrap;
-    }
+    .time{
+          color: #7D7D7D;
+          text-align: right;
+          font-size: 1.2rem;
+          font-weight: 600;
+     }
 </style>
 """, unsafe_allow_html=True)
 
@@ -78,8 +78,18 @@ with c2:
     st.markdown("<div class='title'>SMT 60 | TEMPERATURE & HUMIDITY MONITORING</div>", unsafe_allow_html=True)
 
 with c3:
-    now = datetime.now().strftime("%d-%m-%Y %H:%M")
-    st.markdown(f"<div class='time'>{now}</div>", unsafe_allow_html=True)
+    with c3:
+        time_placeholder = st.empty()
+        now = datetime.now().astimezone().strftime("%d-%m-%Y %H:%M:%S")
+        time_placeholder.markdown(
+             f"""
+             <div class='time'>
+             🔴 LIVE 
+             {now}
+              </div>
+              """,
+              unsafe_allow_html=True
+          )
 
 st.markdown("---")
 
