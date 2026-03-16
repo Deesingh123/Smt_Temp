@@ -1,25 +1,20 @@
 import streamlit as st
 import random
 from datetime import datetime
-import pytz
 from streamlit_autorefresh import st_autorefresh
 
 st.set_page_config(layout="wide", page_title="SMT 60 Monitoring")
 
-# Auto-refresh every 5 seconds
+# Auto-refresh every 5 seconds to update temperature data
 st_autorefresh(interval=5000, key="data_refresh")
 
 # ────────────────────────────────────────────────
-#                CSS
+#                CSS + JS for live clock
 # ────────────────────────────────────────────────
 st.markdown("""
 <style>
-    body {
-        background-color: #ECFOF1;
-    }
-    .block-container {
-        padding-top: 1rem !important;
-    }
+    body { background-color: #ECFOF1; }
+    .block-container { padding-top: 1rem !important; }
     .title {
         text-align: center;
         font-size: 2.4rem;
@@ -55,13 +50,33 @@ st.markdown("""
     }
     .temp { color: #2ECC71; }
     .hum  { color: #3498DB; }
-    .time{
-          color: #7D7D7D;
-          text-align: right;
-          font-size: 1.2rem;
-          font-weight: 600;
-     }
+    .time {
+        color: #7D7D7D;
+        text-align: right;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
 </style>
+
+<!-- JavaScript live clock -->
+<script>
+function updateClock() {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const dateStr = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+    const clockElement = document.getElementById('live-clock');
+    if (clockElement) {
+        clockElement.innerHTML = `🔴 LIVE <br> ${dateStr}`;
+    }
+}
+setInterval(updateClock, 1000);
+window.addEventListener('load', updateClock);
+</script>
 """, unsafe_allow_html=True)
 
 # ────────────────────────────────────────────────
@@ -79,22 +94,13 @@ with c2:
     st.markdown("<div class='title'>SMT 60 | TEMPERATURE & HUMIDITY MONITORING</div>", unsafe_allow_html=True)
 
 with c3:
-    # Display current time (updates every 5 seconds)
-    now = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-    st.markdown(
-        f"""
-        <div class='time'>
-        🔴 LIVE <br>
-        {now}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    # Placeholder that will be filled by JavaScript
+    st.markdown('<div id="live-clock" class="time">🔴 LIVE <br> --</div>', unsafe_allow_html=True)
 
 st.markdown("---")
 
 # ────────────────────────────────────────────────
-#                DATA
+#                DATA (updated every 5 sec via autorefresh)
 # ────────────────────────────────────────────────
 reference = {
     "Line 1 & 2": (23.4, 49.0),
@@ -106,9 +112,7 @@ reference = {
 def vary(v, delta):
     return round(v + random.uniform(-delta, delta), 1)
 
-# Create two columns for cards
 colA, colB = st.columns(2)
-
 pairs = list(reference.items())
 
 for i in range(0, len(pairs), 2):
@@ -143,4 +147,3 @@ for i in range(0, len(pairs), 2):
                 </div>
             </div>
             """, unsafe_allow_html=True)
-    # Line 7 is placed alone in the left column, so nothing more needed
